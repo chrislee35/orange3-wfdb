@@ -1,7 +1,7 @@
 from Orange.data import (ContinuousVariable, Domain, FileFormat, StringVariable, Table, TimeVariable)
 import wfdb
 import numpy as np
-import datetime
+import os
 
 class HDRReader_WFDB(FileFormat):
     """ Reader for WFDB files from PhysioNet.
@@ -26,6 +26,7 @@ class HDRReader_WFDB(FileFormat):
     @staticmethod
     def read_hea(filename):
         rec = wfdb.io.rdrecord(filename.replace('.hea', ''))
+        rec_name = os.path.basename(filename).replace('.hea', '')
 
         signal_names = rec.sig_name
         signal_data = rec.p_signal
@@ -36,6 +37,7 @@ class HDRReader_WFDB(FileFormat):
         timestamps = np.linspace(0, signal_length / samples_per_second, signal_length, endpoint=False)
                 
         metas = [
+            StringVariable("Record"),
             TimeVariable("Timestamp")
         ]
         for signal_name in signal_names:
@@ -46,7 +48,7 @@ class HDRReader_WFDB(FileFormat):
         
         metadata = []
         for i, row in enumerate(signal_data):
-            rec = [timestamps[i]]
+            rec = [rec_name, timestamps[i]]
             for j, name in enumerate(signal_names):
                 rec.append(row[j])
                 rec.append(signal_units[j])

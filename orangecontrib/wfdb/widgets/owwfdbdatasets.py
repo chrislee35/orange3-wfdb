@@ -124,18 +124,22 @@ class WFDBServerFiles:
         files = []
         
         for db in dbs:
-            if db['slug'] in seen: continue
-            seen.add(db['slug'])
+            slug = db['slug']
+            if slug in seen: continue
+            seen.add(slug)
+            # i cannot access items with a DUA.
+            if db['dua'] is not None: continue
             
             instances = 0
-            #try:
-            #    instances = len(wfdb.get_record_list(db['slug']))
-            #except Exception:
-            #    print("could not determine number of instances for "+db[0])
-            #    continue
+            try:
+                instances = len(wfdb.get_record_list(slug))
+            except Exception:
+                # most likely this is due to a 404 error which
+                # indicates that the dataset has no WFDB files
+                continue
             
             rec = { 
-                "collection": db['slug'],
+                "collection": slug,
                 "description": db.get('abstract', ''),
                 "name": db.get('title', ''),
                 "title": db.get('title', ''),
@@ -148,17 +152,17 @@ class WFDBServerFiles:
                 "version": "0",
                 "tags": ["biology", "physionet", "wfdb"],
                 "references": [],
-                "source": "<a href='https://physionet.org/content/"+db['slug']+"'>"+db['slug']+"</a>",
-                "url": "https://physionet.org/content/"+db['slug'],
+                "source": "<a href='https://physionet.org/content/"+slug+"'>"+slug+"</a>",
+                "url": "https://physionet.org/content/"+slug,
                 "seealso": [
                     "<a href='https://physionet.org/'>PhysioNet</a>"
                 ]
             }
-            info_dict[(db['slug'],)] = rec
+            info_dict[(slug,)] = rec
             info_dict_list.append(
-                [ [ "wfdb", db['slug'] ], rec ]
+                [ [ "wfdb", slug ], rec ]
             )
-            files.append((db['slug'],))
+            files.append((slug,))
     
         self._info = info_dict
         self._files = files
