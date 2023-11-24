@@ -21,8 +21,11 @@ class HDRReader_WFDB(FileFormat):
             - 2D numpy array with the same last dimension as xs, (Y)
             - Orange.data.Table with only meta or class attributes
         """
-        
-        rec = wfdb.io.rdrecord(self.filename.replace('.hea', ''))
+        return HDRReader_WFDB.read_hea(self.filename)
+    
+    @staticmethod
+    def read_hea(filename):
+        rec = wfdb.io.rdrecord(filename.replace('.hea', ''))
 
         signal_names = rec.sig_name
         signal_data = rec.p_signal

@@ -11,7 +11,7 @@ NAME = 'Orange3-WFDB'
 
 MAJOR = 0
 MINOR = 0
-MICRO = 0
+MICRO = 1
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 
 AUTHOR = 'Chris Lee'
